@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get("signin/metamask")
+  @Post("signin/metamask")
   async signInWithMetamask(@Body() { signature, message, wallet_address }: {
     signature: string,
     message: string,

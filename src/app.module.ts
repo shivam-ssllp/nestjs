@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AdvertisementsModule } from './practices/advertisements.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_CONSTANTS_SECRET,
       signOptions: { expiresIn: 60 * 60 * 24 + 's' },
     }),
+    AdvertisementsModule,
     UsersModule,
   ],
   controllers: [AppController],
