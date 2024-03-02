@@ -1,34 +1,24 @@
-import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ethers } from 'ethers';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly mailer: MailerService) { }
-  async sendMail() {
-    return await this.mailer.sendMail({
-      from: 'noreply@testingnew.online',
-      to: 'mohini.henceforth@gmail.com',
-      html: '<h1> hii user </h1>',
-      attachments: [
-        {
-          filename: 'text.txt',
-          content: 'hi this is attachment'
-        }
-      ]
-    })
-  }
 
-  async braucherMail(body) {
-    return await this.mailer.sendMail({
-      from: 'noreply@testingnew.online',
-      to: body.email,
-      html: `<h1> hii ${body.name} </h1><br> <p>Thanks for connecting us</p>`,
-      attachments: [
-        {
-          filename: 'text.txt',
-          content: 'hi this is attachment'
-        }
-      ]
+  constructor(
+    private jwtService: JwtService
+  ) { }
+
+  async signInWithMetamask(signature: string, message: string, wallet_address: string): Promise<string> {
+    const wallet = ethers.verifyMessage(message, signature)
+    if (wallet.toLowerCase() == wallet_address.toLowerCase()) {
+      return await this.jwtService.signAsync(wallet)
+    }
+    throw new UnauthorizedException({
+      signature,
+      message,
+      wallet,
+      wallet_address,
     })
   }
 }

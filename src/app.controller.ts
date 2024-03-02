@@ -1,18 +1,18 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { BraucherMailDto } from './users/dto/user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags("/")
+@Controller("/")
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Post()
-  sendMail() {
-    return this.appService.sendMail();
-  }
-
-  @Post('broucher')
-  braucherMail(@Body() body: BraucherMailDto) {
-    return this.appService.braucherMail(body);
+  @Post("signin/metamask")
+  async signInWithMetamask(@Body() { signature, message, wallet_address }: {
+    signature: string,
+    message: string,
+    wallet_address: string
+  }): Promise<string> {
+    return await this.appService.signInWithMetamask(signature, message, wallet_address);
   }
 }
