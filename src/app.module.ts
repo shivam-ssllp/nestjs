@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AdvertisementsModule } from './practices/advertisements.module';
 import { config } from 'dotenv';
+import { AuthModule } from './auth/auth.module';
 
 config()
 @Global()
@@ -18,6 +19,7 @@ config()
     }),
     AdvertisementsModule,
     UsersModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

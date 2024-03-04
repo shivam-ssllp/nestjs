@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './users/dto/user.dto';
 import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
+import { AuthGuard } from './auth/auth.guard';
 
 @ApiTags()
 @Controller("/")
@@ -10,6 +12,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly userService: UsersService,
+    private readonly authService: AuthService,
   ) { }
 
   @Post("signin/metamask")
@@ -26,8 +29,22 @@ export class AppController {
 
   }
 
-  @Post("SignUp")
+  @Post("signUp")
   signUp(@Body() body: SignUpDto) {
     return this.userService.signUp(body)
+  }
+
+  @ApiBearerAuth('authentication')
+  @UseGuards(AuthGuard)
+  @Patch('verify-mail')
+  verifyEmail() {
+
+  }
+
+  @ApiBearerAuth('authentication')
+  @UseGuards(AuthGuard)
+  @Patch('verify-phone')
+  verifyPhone() {
+
   }
 }

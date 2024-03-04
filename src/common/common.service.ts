@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -10,7 +11,8 @@ export class Common {
   constructor(
     @InjectModel(Users.name) private readonly model: Model<Users>,
     @InjectModel(Sessions.name) private readonly session: Model<Users>,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService
   ) { }
 
   async generateOtp() {
@@ -75,5 +77,18 @@ export class Common {
       access_token: access_token,
     })
     return access_token
+  }
+
+  async sendVerification(email: string, fname: string, lname: string, otp: number) {
+    return await this.mailerService.sendMail({
+      to: email,
+      from: process.env.EMAIL,
+      subject: `Verification mail`,
+      template: 'verification',
+      context: {
+        NAME: `${fname} ${lname}`,
+        OTP: `${otp}`
+      }
+    })
   }
 }

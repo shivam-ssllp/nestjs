@@ -26,7 +26,7 @@ export class UsersService {
       }
       const otp = await this.common.generateOtp()
       const password = await this.common.encriptPass(body.password)
-      await this.model.create({
+      let user = await this.model.create({
         first_name: body.first_name,
         last_name: body.last_name,
         temp_email: body.email,
@@ -38,6 +38,10 @@ export class UsersService {
         created_at: moment().utc().valueOf(),
         date_of_change_pasword: moment().utc().valueOf()
       })
+      await this.common.sendVerification(body.email, user.first_name, user.last_name, otp)
+      const payload = { id: user?._id, email: body?.email }
+      const accessToken = await this.common.createSession(payload)
+      return { accessToken }
     } catch (error) {
       console.log('===> From SignUp', error);
       throw error

@@ -15,6 +15,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('API Docs: SSLLP')
     .setDescription('Seek Solution LLP')
+    .addBearerAuth({ type: 'http', name: 'token', in: 'header' }, 'authentication')
     .setVersion('1.0')
     .addTag('default')
     .build();

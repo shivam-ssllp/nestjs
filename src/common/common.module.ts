@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { Common } from "./common.service";
 import { JwtModule } from "@nestjs/jwt";
 import { MailerModule } from "@nestjs-modules/mailer";
@@ -6,7 +6,11 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { MongooseModule } from "@nestjs/mongoose";
 import { Sessions, SessionsModel } from "src/users/schema/session.schema";
 import { Users, UsersModel } from "src/users/schema/users.schema";
+import { config } from "dotenv";
+import { ConfigModule } from "@nestjs/config";
 
+config()
+console.log({secret: process.env.JWT_CONSTANTS_SECRET});
 
 @Module({
   imports: [
@@ -18,11 +22,11 @@ import { Users, UsersModel } from "src/users/schema/users.schema";
     }),
     MailerModule.forRoot({
       transport: {
-        host: "smtp.zeptomail.eu",
-        port: 587,
+        host: "smtp.gmail.com",
+        secure: false,
         auth: {
-          user: process.env.ZEPTO_USER,
-          pass: process.env.ZEPTO_TOKEN
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD
         }
       },
       template: {
