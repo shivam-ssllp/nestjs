@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { SignUpDto } from './users/dto/user.dto';
+import { OtpDto, SignUpDto } from './users/dto/user.dto';
 import { UsersService } from './users/users.service';
 import { AuthService } from './auth/auth.service';
 import { AuthGuard } from './auth/auth.guard';
@@ -37,8 +37,8 @@ export class AppController {
   @ApiBearerAuth('authentication')
   @UseGuards(AuthGuard)
   @Patch('verify-mail')
-  verifyEmail() {
-
+  verifyEmail(@Body() body: OtpDto, @Request() req: any) {
+    return this.authService.verifyEmail(body, req.user.id)
   }
 
   @ApiBearerAuth('authentication')
