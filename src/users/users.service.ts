@@ -6,18 +6,19 @@ import { Users } from './schema/users.schema';
 import { Model, model } from 'mongoose';
 import { Common } from 'src/common/common.service';
 import * as moment from 'moment';
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(Users.name) private readonly model: Model<Users>,
-    private readonly common: Common
+    private readonly common: Common,
+    private readonly model: DbService
   ) { }
 
   async signUp(body: SignUpDto) {
     try {
-      const existMail = await this.model.findOne({ email: body.email, })
-      const existPhone = await this.model.findOne({ country_code: body.country_code, phone: body.phone })
+      const existMail = await this.model.users.findOne({ email: body.email, })
+      const existPhone = await this.model.users.findOne({ country_code: body.country_code, phone: body.phone })
       if (existMail) {
         throw new HttpException({ error_description: 'This Email is Already Exist! Please Use another Email Address', error_code: 'EMAIL_ALREADY_EXIST' }, HttpStatus.BAD_REQUEST);
       }
@@ -26,7 +27,7 @@ export class UsersService {
       }
       const otp = await this.common.generateOtp()
       const password = await this.common.encriptPass(body.password)
-      let user = await this.model.create({
+      let user = await this.model.users.create({
         first_name: body.first_name,
         last_name: body.last_name,
         temp_email: body.email,

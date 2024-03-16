@@ -3,16 +3,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+import { DbService } from 'src/db/db.service';
 import { Sessions } from 'src/users/schema/session.schema';
 import { Users } from 'src/users/schema/users.schema';
 
 
 export class Common {
   constructor(
-    @InjectModel(Users.name) private readonly model: Model<Users>,
-    @InjectModel(Sessions.name) private readonly session: Model<Users>,
     private readonly jwtService: JwtService,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
+    private readonly model: DbService
   ) { }
 
   async generateOtp() {
@@ -72,7 +72,7 @@ export class Common {
 
   async createSession(payload) {
     const access_token = await this.jwtService.signAsync(payload)
-    await this.session.create({
+    await this.model.session.create({
       user_id: payload?.id,
       access_token: access_token,
     })

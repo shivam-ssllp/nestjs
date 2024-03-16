@@ -3,7 +3,7 @@ import { OtpDto } from "src/users/dto/user.dto";
 
 @Injectable()
 export class AuthService {
-  constructor() { }
+  constructor(){}
 
   async verifyEmail(body: OtpDto, user_id: string) {
     try {

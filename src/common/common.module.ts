@@ -8,13 +8,13 @@ import { Sessions, SessionsModel } from "src/users/schema/session.schema";
 import { Users, UsersModel } from "src/users/schema/users.schema";
 import { config } from "dotenv";
 import { ConfigModule } from "@nestjs/config";
+import { DbModule } from "src/db/db.module";
 
 config()
 console.log({secret: process.env.JWT_CONSTANTS_SECRET});
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Users.name, schema: UsersModel }, { name: Sessions.name, schema: SessionsModel }],),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_CONSTANTS_SECRET,
@@ -37,6 +37,7 @@ console.log({secret: process.env.JWT_CONSTANTS_SECRET});
         },
       },
     }),
+    DbModule
   ],
   providers: [Common],
   exports: [Common]

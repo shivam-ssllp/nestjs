@@ -5,24 +5,25 @@ import { Advertisements } from './schema/advertisements.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ethers } from 'ethers';
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class AdvertisementsService {
   constructor(
-    @InjectModel(Advertisements.name) private model: Model<Advertisements>
+    private readonly model: DbService
   ) {
 
   }
 
   async create(createPracticeDto: CreateAdvertisementsDto, ip: string) {
-    console.log("createPracticeDto",createPracticeDto);
-    
+    console.log("createPracticeDto", createPracticeDto);
+
     let decodedWalletAddress = ethers.verifyMessage(createPracticeDto.message, createPracticeDto.signature)
-    console.log("decodedWalletAddress",decodedWalletAddress);
-    
+    console.log("decodedWalletAddress", decodedWalletAddress);
+
     if (decodedWalletAddress.toLowerCase() == createPracticeDto.wallet_address.toLowerCase()) {
 
-      return await this.model.create({
+      return await this.model.advertisements.create({
         wallet_address: createPracticeDto.wallet_address,
         image: createPracticeDto.message,
         pixels: createPracticeDto.pixels,
@@ -43,7 +44,7 @@ export class AdvertisementsService {
   }
 
   async findOne(id: string) {
-    return await this.model.findById(id)
+    return await this.model.advertisements.findById(id)
   }
 
   update(id: number, updatePracticeDto: UpdateAdvertisementsDto) {

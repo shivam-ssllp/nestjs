@@ -7,10 +7,11 @@ import { Common } from 'src/common/common.service';
 import { JwtModule } from '@nestjs/jwt';
 import { Sessions, SessionsModel } from './schema/session.schema';
 import { CommonModule } from 'src/common/common.module';
+import { DbModule } from 'src/db/db.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Users.name, schema: UsersModel }, { name: Sessions.name, schema: SessionsModel }],),
+    DbModule,
     CommonModule
   ],
   controllers: [UsersController],
