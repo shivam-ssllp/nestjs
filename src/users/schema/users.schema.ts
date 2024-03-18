@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import * as moment from "moment";
 import { HydratedDocument } from "mongoose";
 
 export const UserSchemaName = "Users"
@@ -42,15 +43,21 @@ export class Users {
   phone_otp: number
 
   @Prop({ type: Boolean, default: false })
-  is_email_verifed: boolean
+  is_email_verified: boolean
 
   @Prop({ type: Boolean, default: false })
-  is_phone_verifed: boolean
+  is_phone_verified: boolean
 
   @Prop({ type: Boolean, default: false })
   is_deleted: boolean
 
-  @Prop({ type: Number, default: 0 })
+  @Prop({ type: Boolean, default: false })
+  is_verified_user: boolean
+
+  @Prop({ type: Boolean, default: false })
+  is_verified_bank: boolean
+
+  @Prop({ type: Number, default: moment().utc().valueOf() })
   created_at: number
 
   @Prop({ type: Number, default: 0 })

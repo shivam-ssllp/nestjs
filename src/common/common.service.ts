@@ -1,14 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { DbService } from 'src/db/db.service';
 
-
+@Injectable()
 export class Common {
   constructor(
     private jwtService: JwtService,
     private mailerService: MailerService,
-    private readonly model: DbService
+    private model: DbService
   ) { }
 
   async generateOtp() {
@@ -67,7 +68,7 @@ export class Common {
   }
 
   async createSession(payload) {
-    const access_token = await this.jwtService.sign(payload)
+    const access_token = await this.jwtService.signAsync(payload)
     await this.model.session.create({
       user_id: payload?.id,
       access_token: access_token,
@@ -76,6 +77,8 @@ export class Common {
   }
 
   async sendVerification(email: string, fname: string, lname: string, otp: number) {
+    console.log();
+    
     return await this.mailerService.sendMail({
       to: email,
       from: process.env.EMAIL,

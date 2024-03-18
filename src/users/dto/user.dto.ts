@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsStrongPassword } from "class-validator";
+import { IsEmail, IsOptional, IsStrongPassword } from "class-validator";
+import { DeviceType, SignInType } from "src/auth/roles";
 
 export class CreateUserDto { }
 
@@ -32,10 +33,24 @@ export class OtpDto {
 }
 
 export class SignInDto {
+  @IsOptional()
   @IsEmail()
   @ApiProperty()
   email: string
 
+  @IsOptional()
   @ApiProperty()
   password: string
+
+
+  @ApiProperty({ required: false })
+  fcm_token: string
+
+  @IsOptional()
+  @ApiProperty({ enum: DeviceType, default: DeviceType.Web })
+  device_type: string
+}
+
+export class SocialSignInDto { 
+  
 }

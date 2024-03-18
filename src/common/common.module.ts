@@ -10,10 +10,32 @@ import { config } from "dotenv";
 import { ConfigModule } from "@nestjs/config";
 import { DbModule } from "src/db/db.module";
 
-config()
+@Global()
 @Module({
   imports: [
-    DbModule
+    DbModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_CONSTANTS_SECRET,
+      // signOptions: { expiresIn: 60 * 60 * 24 + 's' },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: "smtp.gmail.com",
+        secure: false,
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD
+        }
+      },
+      template: {
+        dir: process.cwd() + '/dist/templates/',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
   ],
   providers: [Common],
   exports: [Common]
