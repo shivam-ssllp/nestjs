@@ -1,9 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto, SignUpDto } from './dto/user.dto';
+import { SignUpDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Users } from './schema/users.schema';
-import { Model, model } from 'mongoose';
 import { Common } from 'src/common/common.service';
 import * as moment from 'moment';
 import { DbService } from 'src/db/db.service';
@@ -27,7 +24,24 @@ export class UsersService {
       }
       const otp = await this.common.generateOtp()
       const password = await this.common.encriptPass(body.password)
-      let user = await this.model.users.create({
+      const user = await this.createUser(body, password, otp)
+      try {
+        await this.common.sendVerification(body.email, user.first_name, user.last_name, otp)
+      } catch (error) {
+        console.log(error);
+      }
+      const payload = { id: user?._id, email: body?.email }
+      const accessToken = await this.common.createSession(payload)
+      return { accessToken }
+    } catch (error) {
+      console.log('===> From SignUp', error);
+      throw error
+    }
+  }
+
+  async createUser(body: any, password: string, otp) {
+    try {
+      return await this.model.users.create({
         first_name: body.first_name,
         last_name: body.last_name,
         temp_email: body.email,
@@ -39,18 +53,10 @@ export class UsersService {
         created_at: moment().utc().valueOf(),
         date_of_change_pasword: moment().utc().valueOf()
       })
-      await this.common.sendVerification(body.email, user.first_name, user.last_name, otp)
-      const payload = { id: user?._id, email: body?.email }
-      const accessToken = await this.common.createSession(payload)
-      return { accessToken }
     } catch (error) {
-      console.log('===> From SignUp', error);
+      console.log('===> From createUser',error);
       throw error
     }
-  }
-
-  findAll() {
-    return `This action returns all users`;
   }
 
   findOne(id: number) {

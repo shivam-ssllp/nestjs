@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { OtpDto, SignUpDto } from './users/dto/user.dto';
+import { OtpDto, SignInDto, SignUpDto } from './users/dto/user.dto';
 import { UsersService } from './users/users.service';
 import { AuthService } from './auth/auth.service';
 import { AuthGuard } from './auth/auth.guard';
@@ -25,8 +25,8 @@ export class AppController {
   }
 
   @Post("signIn")
-  signIn() {
-
+  signIn(@Body() body: SignInDto) {
+    return this.authService.signIn(body)
   }
 
   @Post("signUp")
@@ -37,14 +37,16 @@ export class AppController {
   @ApiBearerAuth('authentication')
   @UseGuards(AuthGuard)
   @Patch('verify-mail')
-  verifyEmail(@Body() body: OtpDto, @Request() req: any) {
-    return this.authService.verifyEmail(body, req.user.id)
+  async verifyEmail(@Body() body: OtpDto, @Request() req: any) {
+    const types = 'email'
+    return await this.authService.verifyOtp(body, types, req.user.id)
   }
 
   @ApiBearerAuth('authentication')
   @UseGuards(AuthGuard)
   @Patch('verify-phone')
-  verifyPhone() {
-
+  async verifyPhone(@Body() body: OtpDto, @Request() req: any) {
+    const types = 'phone'
+    return await  this.authService.verifyOtp(body, types, req.user.id)
   }
 }
