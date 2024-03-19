@@ -1,15 +1,36 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Types } from "mongoose";
+import { Common } from "src/common/common.service";
 import { DbService } from "src/db/db.service";
-import { OtpDto } from "src/users/dto/user.dto";
+import { ErrorMsg, SuccessMsg } from "src/error/error.handler";
+import { OtpDto, SignInDto } from "src/users/dto/user.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly model: DbService
+    private readonly model: DbService,
+    private readonly common: Common
   ) { }
 
-  async signIn(body) {
+  async signIn(body: SignInDto) {
+    try {
+      const query = {
+        $or: [
+          { email: body.email },
+          { temp_email: body.email }
+        ]
+      }
+      let user: any = await this.model.users.findOne(query)
+      const isMatch = await this.common.bcriptPass(body?.password, user?.password)
+      if (!isMatch) throw new HttpException({ message: ErrorMsg["en"].WRONG_PASS }, HttpStatus.BAD_REQUEST)
+      const payload = { id: user?._id, email: body?.email }
+      const accessToken = await this.common.createSession(payload)
+      user = await this.model.users.findOne(query, { password: 0, is_deleted: 0, __v: 0, updated_at: 0 }, { lean: true })
+      return { accessToken, ...user }
+    } catch (error) {
+      console.log("signIn ==>", error);
+      throw error
+    }
 
   }
 
@@ -18,7 +39,7 @@ export class AuthService {
       let data
       let user = await this.model.users.findById({ _id: new Types.ObjectId(user_id) })
       if (user?.[field + '_otp'] !== body.otp) {
-        throw new HttpException({ error_description: 'Invalid OTP', error_code: 'INVALID_OTP' }, HttpStatus.BAD_REQUEST)
+        throw new HttpException({ message: ErrorMsg["en"].INVALID_OTP }, HttpStatus.BAD_REQUEST)
       }
       if (field == 'email') {
         data = {
@@ -52,7 +73,7 @@ export class AuthService {
         ...(field === 'phone' && { temp_country_code: user.temp_country_code }),
       };
       let temp_destroy = await this.model.users.deleteMany(query)
-      if (temp_destroy) { throw new HttpException({ message: 'OTP Verified' }, HttpStatus.OK) }
+      if (temp_destroy) { throw new HttpException({ message: SuccessMsg["en"].OTP_VERIFIED }, HttpStatus.OK) }
 
     } catch (error) {
       console.log(error);

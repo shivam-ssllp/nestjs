@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Common } from 'src/common/common.service';
 import * as moment from 'moment';
 import { DbService } from 'src/db/db.service';
+import { ErrorMsg } from 'src/error/error.handler';
 
 @Injectable()
 export class UsersService {
@@ -17,10 +18,10 @@ export class UsersService {
       const existMail = await this.model.users.findOne({ email: body.email, })
       const existPhone = await this.model.users.findOne({ country_code: body.country_code, phone: body.phone })
       if (existMail) {
-        throw new HttpException({ error_description: 'This Email is Already Exist! Please Use another Email Address', error_code: 'EMAIL_ALREADY_EXIST' }, HttpStatus.BAD_REQUEST);
+        throw new HttpException({ message: ErrorMsg["en"].EMAIL_ALREADY_EXIST }, HttpStatus.BAD_REQUEST);
       }
       if (existPhone) {
-        throw new HttpException({ error_description: 'This Phone no. is Already Exist! Please Use another Phone no.', error_code: 'PHONE_ALREADY_EXIST' }, HttpStatus.BAD_REQUEST);
+        throw new HttpException({ message: ErrorMsg["en"].PHONE_ALREADY_EXIST }, HttpStatus.BAD_REQUEST);
       }
       const otp = await this.common.generateOtp()
       const password = await this.common.encriptPass(body.password)
@@ -54,20 +55,8 @@ export class UsersService {
         date_of_change_pasword: moment().utc().valueOf()
       })
     } catch (error) {
-      console.log('===> From createUser',error);
+      console.log('===> From createUser', error);
       throw error
     }
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
