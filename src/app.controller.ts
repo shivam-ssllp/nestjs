@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OtpDto, SignInDto, SignUpDto } from './users/dto/user.dto';
 import { UsersService } from './users/users.service';
 import { AuthService } from './auth/auth.service';
@@ -24,11 +24,13 @@ export class AppController {
     return await this.appService.signInWithMetamask(signature, message, wallet_address);
   }
 
+  @ApiConsumes('application/json', 'application/x-www-form-urlencoded')
   @Post("signIn")
   signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body)
   }
 
+  @ApiConsumes('application/json', 'application/x-www-form-urlencoded')
   @Post("signUp")
   signUp(@Body() body: SignUpDto) {
     return this.userService.signUp(body)
@@ -36,6 +38,7 @@ export class AppController {
 
   @ApiBearerAuth('authentication')
   @UseGuards(AuthGuard)
+  @ApiConsumes('application/json', 'application/x-www-form-urlencoded')
   @Patch('verify-mail')
   async verifyEmail(@Body() body: OtpDto, @Request() req: any) {
     const types = 'email'
@@ -44,9 +47,20 @@ export class AppController {
 
   @ApiBearerAuth('authentication')
   @UseGuards(AuthGuard)
+  @ApiConsumes('application/json', 'application/x-www-form-urlencoded')
   @Patch('verify-phone')
   async verifyPhone(@Body() body: OtpDto, @Request() req: any) {
     const types = 'phone'
-    return await  this.authService.verifyOtp(body, types, req.user.id)
+    return await this.authService.verifyOtp(body, types, req.user.id)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('authentication')
+  @ApiOperation({ summary: 'logout' })
+  @ApiConsumes('application/json', 'application/x-www-form-urlencoded')
+  @Delete('/logout')
+  logOut(@Request() req) {
+    let tok = req?.headers?.authorization?.split(' ') ?? null
+    return this.authService.logOut(req.user.id, tok[1])
   }
 }
