@@ -51,6 +51,13 @@ export class SignInDto {
   device_type: string
 }
 
-export class SocialSignInDto { 
-  
+export class SocialSignInDto {
+
+}
+
+export class GetUsersDto {
+  @ApiProperty({ default: 1, required: true })
+  pagination: number
+  @ApiProperty({ default: 10, required: true })
+  limit: number
 }

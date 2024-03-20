@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SignUpDto } from './dto/user.dto';
+import { GetUsersDto, SignUpDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Common } from 'src/common/common.service';
 import * as moment from 'moment';
@@ -56,6 +56,17 @@ export class UsersService {
       })
     } catch (error) {
       console.log('===> From createUser', error);
+      throw error
+    }
+  }
+
+  async getAllUsers(payload: GetUsersDto) {
+    try {
+      const options = await this.common.set_options(payload.pagination, payload.limit)
+      const users = await this.model.users.find({ is_deleted: false }, { __v: 0 }, options)
+      return { users }
+    } catch (error) {
+      console.log(error);
       throw error
     }
   }
