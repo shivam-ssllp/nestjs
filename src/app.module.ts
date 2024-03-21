@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { AdvertisementsModule } from './practices/advertisements.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { AdminModule } from './admin/admin.module';
 
 
 @Module({
@@ -14,7 +15,8 @@ import { CommonModule } from './common/common.module';
     AdvertisementsModule,
     UsersModule,
     AuthModule,
-    CommonModule
+    CommonModule,
+    AdminModule
   ],
   controllers: [AppController],
   providers: [AppService],

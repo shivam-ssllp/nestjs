@@ -5,6 +5,7 @@ import { Common } from 'src/common/common.service';
 import * as moment from 'moment';
 import { DbService } from 'src/db/db.service';
 import { ErrorMsg } from 'src/error/error.handler';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +66,16 @@ export class UsersService {
       const options = await this.common.set_options(payload.pagination, payload.limit)
       const users = await this.model.users.find({ is_deleted: false }, { __v: 0 }, options)
       return { users }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
+
+  async getById(id: string) {
+    try {
+      const data = await this.model.users.findById({ _id: new Types.ObjectId(id) }, { __v: 0, is_deleted: 0, updated_at: 0 }, { lean: true })
+      return { data }
     } catch (error) {
       console.log(error);
       throw error
