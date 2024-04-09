@@ -42,7 +42,8 @@
     "nestjs-sharp": "^1.1.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "simple-thumbnail": "^1.6.5"
+    "simple-thumbnail": "^1.6.5",
+    "stripe": "^14.24.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
