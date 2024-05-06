@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { AdminModule } from './admin/admin.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
 
 
 @Module({
@@ -18,7 +19,8 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     AuthModule,
     CommonModule,
     AdminModule,
-    SubscriptionsModule
+    SubscriptionsModule,
+    EnrollmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
