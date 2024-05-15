@@ -9,6 +9,8 @@ import { CommonModule } from './common/common.module';
 import { AdminModule } from './admin/admin.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { AgorachatModule } from './agorachat/agorachat.module';
 
 
 @Module({
@@ -20,7 +22,9 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
     CommonModule,
     AdminModule,
     SubscriptionsModule,
-    EnrollmentsModule
+    EnrollmentsModule,
+    BookingsModule,
+    AgorachatModule
   ],
   controllers: [AppController],
   providers: [AppService],
